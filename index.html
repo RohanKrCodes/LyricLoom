@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LyricLoom</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="sidebar">
+        <div class="logo">
+          <img src="logo.png" alt="logo" />
+          <h1>LyricLoom</h1>
+          <div class="close-icon"><i class="fas fa-times"></i></div>
+        </div>
+        <div class="line"></div>
+        <div class="icon">
+          <div class="home"><i class="fas fa-home"></i>Home</div>
+          <div class="explore"><i class="fab fa-slack"></i>Explore</div>
+        </div>
+        <div class="library">
+          <div class="lib"><i class="fas fa-book"></i>Your Library</div>
+          <div class="songCard">
+            <i class="fas fa-music"></i>
+            <div class="info">
+              <div class="songName">Perfect</div>
+              <div class="artist">Ed Sheeran</div>
+            </div>
+            <div class="play">Play <i class="fas fa-play"></i></div>
+          </div>
+        </div>
+      </div>
+      <div class="playlists">
+        <div class="hamburger-icon"><i class="fas fa-bars"></i></div>
+        <div class="playlist">
+          <h2>Populars</h2>
+          <div class="songs" id="popularSongs"></div>
+        </div>
+        <div class="playlist">
+          <h2>Trending</h2>
+          <div class="songs" id="trendingSongs"></div>
+        </div>
+        <div class="playlist">
+          <h2>Playlists</h2>
+          <div class="songs" id="userPlaylists"></div>
+        </div>
+      </div>
+      <div class="audio-player">
+        <div class="ar">
+          <div class="song-info">
+            <img src="covers/1.jpeg" alt="Song Image" />
+            <div class="song-details">
+              <div class="song-name">Perfect</div>
+              <div class="artist">Ed Sheeran</div>
+            </div>
+          </div>
+          <div class="controls">
+            <div class="buttons">
+              <button id="prev"><i class="fas fa-backward"></i></button>
+              <button id="play-pause"><i class="fas fa-play"></i></button>
+              <button id="next"><i class="fas fa-forward"></i></button>
+            </div>
+            <div class="volume">
+              <i class="fas fa-volume-down"></i>
+              <input
+                type="range"
+                id="volume-bar"
+                min="0"
+                max="100"
+                value="100"
+              />
+              <i class="fas fa-volume-up"></i>
+            </div>
+          </div>
+        </div>
+        <div class="seek-bar">
+          <input type="range" id="seek-bar" min="0" max="100" value="0" />
+        </div>
+      </div>
+    </div>
+    <script src="script2.js"></script>
+  </body>
+</html>
