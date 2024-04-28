@@ -1,310 +1,316 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const popularSongsContainer = document.getElementById("popularSongs");
-  const trendingSongsContainer = document.getElementById("trendingSongs");
-  const audio = new Audio();
-  let currentSong = null;
-  let songIndex = 0;
-  let songs = [];
+let audioElement = new Audio("songs/3.mp3");
+let masterPlay = document.getElementById("masterPlay");
+let myProgressBar = document.getElementById("myProgressBar");
+let vBar = document.getElementById("vBar");
+let muteButton = document.getElementById("muteButton");
+let startTime = document.getElementById("startTime");
+let endTime = document.getElementById("endTime");
+let masterSongName = document.getElementById("masterSongName");
+let masterSongArtist = document.getElementById("masterSongArtist");
+let card = Array.from(document.getElementsByClassName("card"));
+let songIndex = 2;
+let songThumbnail = document.getElementById("songThumbnail");
+let songPrevious = document.getElementById("songPrevious");
+let songNext = document.getElementById("songNext");
+let forSeek = document.getElementById("forSeek");
+let backSeek = document.getElementById("backSeek");
+let songs = [
+  {
+    songName: "Perfect",
+    songArtist: "Ed Sheeran",
+    filePath: "songs/1.mp3",
+    coverPath: "covers/1.jpeg",
+  },
+  {
+    songName: "Until I Found Her",
+    songArtist: "Stephan Sanchez",
+    filePath: "songs/2.mp3",
+    coverPath: "covers/2.jpeg",
+  },
+  {
+    songName: "Make You Mine",
+    songArtist: "Public",
+    filePath: "songs/3.mp3",
+    coverPath: "covers/3.jpeg",
+  },
+  {
+    songName: "Deja-vu",
+    songArtist: "Olivia Rodrigo",
+    filePath: "songs/4.mp3",
+    coverPath: "covers/4.jpeg",
+  },
+  {
+    songName: "Pehli Nazar Mein",
+    songArtist: "Atif Aslam",
+    filePath: "songs/5.mp3",
+    coverPath: "covers/5.jpeg",
+  },
+  {
+    songName: "Ajab Si",
+    songArtist: "KK",
+    filePath: "songs/6.mp3",
+    coverPath: "covers/6.jpeg",
+  },
+  {
+    songName: "Taake Jhake",
+    songArtist: "Arijit Singh",
+    filePath: "songs/7.mp3",
+    coverPath: "covers/7.jpeg",
+  },
+  {
+    songName: "Chaleya",
+    songArtist: "Arijit Singh",
+    filePath: "songs/8.mp3",
+    coverPath: "covers/8.jpeg",
+  },
+  {
+    songName: "Photograph",
+    songArtist: "Ed Sheeran",
+    filePath: "songs/9.mp3",
+    coverPath: "covers/9.jpeg",
+  },
+  {
+    songName: "Lover",
+    songArtist: "Taylor Swift",
+    filePath: "songs/10.mp3",
+    coverPath: "covers/10.jpeg",
+  },
+  {
+    songName: "Night We Met",
+    songArtist: "Lord Huron",
+    filePath: "songs/11.mp3",
+    coverPath: "covers/11.jpeg",
+  },
+  {
+    songName: "7 Years",
+    songArtist: "Lukas Graham",
+    filePath: "songs/12.mp3",
+    coverPath: "covers/12.jpeg",
+  },
+  {
+    songName: "Calm Down",
+    songArtist: "Rema",
+    filePath: "songs/13.mp3",
+    coverPath: "covers/13.jpeg",
+  },
+  {
+    songName: "Dusk Till Down",
+    songArtist: "Sia ,Zayn",
+    filePath: "songs/14.mp3",
+    coverPath: "covers/14.jpeg",
+  },
+  {
+    songName: "Maniac",
+    songArtist: "Conan Grey",
+    filePath: "songs/15.mp3",
+    coverPath: "covers/15.jpeg",
+  },
+  {
+    songName: "Sugar",
+    songArtist: "Maroon 5",
+    filePath: "songs/16.mp3",
+    coverPath: "covers/16.jpeg",
+  },
+  {
+    songName: "Brown Rang",
+    songArtist: "Yo Yo Honey Singh",
+    filePath: "songs/17.mp3",
+    coverPath: "covers/17.jpeg",
+  },
+  {
+    songName: "Baller",
+    songArtist: "Shubh",
+    filePath: "songs/3.mp3",
+    coverPath: "covers/18.jpeg",
+  },
+  {
+    songName: "Dil Nu",
+    songArtist: "AP Dhillon",
+    filePath: "songs/3.mp3",
+    coverPath: "covers/19.jpeg",
+  },
+  {
+    songName: "Check It Out",
+    songArtist: "Paradox",
+    filePath: "songs/3.mp3",
+    coverPath: "covers/20.jpeg",
+  },
+];
 
-  function toggleSidebar() {
-    const sidebar = document.querySelector(".sidebar");
-    sidebar.classList.toggle("show-sidebar");
-  }
-
-  function createSongCard(song, index) {
-    return `<div class="SongsCard" data-index="${index}">
-                <img src="${song.coverPath}" alt="">
-                <div class="plays">
-                    <i style="color: rgb(214, 39, 98); font-size: 20px" class="fas fa-play"></i>
-                </div>
-                <div class="infos">
-                    <div class="songName">${song.name}</div>
-                    <div class="artist">${song.artist}</div>
-                </div>
-            </div>`;
-  }
-
-  function fetchSongsAndCovers() {
-    // Simulated list of songs and covers (replace this with actual data)
-    const popularSongs = [
-      {
-        name: "Perfect",
-        artist: "Ed Sheeran",
-        filePath: "songs/1.mp3",
-        coverPath: "covers/1.jpeg",
-      },
-      {
-        name: "Until I Found Her",
-        artist: "Stephan Sanchez",
-        filePath: "songs/2.mp3",
-        coverPath: "covers/2.jpeg",
-      },
-      {
-        name: "Make You Mine",
-        artist: "Public",
-        filePath: "songs/3.mp3",
-        coverPath: "covers/3.jpeg",
-      },
-      {
-        name: "Deja-vu",
-        artist: "Olivia Rodrigo",
-        filePath: "songs/4.mp3",
-        coverPath: "covers/4.jpeg",
-      },
-      {
-        name: "Pehli Nazar Mein",
-        artist: "Atif Aslam",
-        filePath: "songs/5.mp3",
-        coverPath: "covers/5.jpeg",
-      },
-      {
-        name: "Ajab Si",
-        artist: "KK",
-        filePath: "songs/6.mp3",
-        coverPath: "covers/6.jpeg",
-      },
-      {
-        name: "Taake Jhake",
-        artist: "Arijit Singh",
-        filePath: "songs/7.mp3",
-        coverPath: "covers/7.jpeg",
-      },
-      {
-        name: "Chaleya",
-        artist: "Arijit Singh",
-        filePath: "songs/8.mp3",
-        coverPath: "covers/8.jpeg",
-      },
-      {
-        name: "Photograph",
-        artist: "Ed Sheeran",
-        filePath: "songs/9.mp3",
-        coverPath: "covers/9.jpeg",
-      },
-      {
-        name: "Lover",
-        artist: "Taylor Swift",
-        filePath: "songs/10.mp3",
-        coverPath: "covers/10.jpeg",
-      },
-      // Add more songs here
-    ];
-
-    const trendingSongs = [
-      {
-        name: "Night We Met",
-        artist: "Lord Huron",
-        filePath: "songs/11.mp3",
-        coverPath: "covers/11.jpeg",
-      },
-      {
-        name: "7 Years",
-        artist: "Lukas Graham",
-        filePath: "songs/12.mp3",
-        coverPath: "covers/12.jpeg",
-      },
-      {
-        name: "Calm Down",
-        artist: "Rema",
-        filePath: "songs/13.mp3",
-        coverPath: "covers/13.jpeg",
-      },
-      {
-        name: "Dusk Till Down",
-        artist: "Sia ,Zayn",
-        filePath: "songs/14.mp3",
-        coverPath: "covers/14.jpeg",
-      },
-      {
-        name: "Maniac",
-        artist: "Conan Grey",
-        filePath: "songs/15.mp3",
-        coverPath: "covers/15.jpeg",
-      },
-      {
-        name: "Sugar",
-        artist: "Maroon 5",
-        filePath: "songs/16.mp3",
-        coverPath: "covers/16.jpeg",
-      },
-      {
-        name: "Brown Rang",
-        artist: "Yo Yo Honey Singh",
-        filePath: "songs/17.mp3",
-        coverPath: "covers/17.jpeg",
-      },
-      {
-        name: "Baller",
-        artist: "Shubh",
-        filePath: "songs/18.mp3",
-        coverPath: "covers/18.jpeg",
-      },
-      {
-        name: "Dil Nu",
-        artist: "AP Dhillon",
-        filePath: "songs/19.mp3",
-        coverPath: "covers/19.jpeg",
-      },
-      {
-        name: "Check It Out",
-        artist: "Paradox",
-        filePath: "songs/20.mp3",
-        coverPath: "covers/20.jpeg",
-      },
-      // Add more songs here
-    ];
-
-    // Simulate asynchronous behavior using Promise
-    return new Promise((resolve, reject) => {
-      // Simulate delay for fetching data
-      setTimeout(() => {
-        resolve([popularSongs, trendingSongs]);
-      }, 1000); // Adjust the delay as needed
-    });
-  }
-
-  function playSong(song) {
-    audio.src = song.filePath;
-    audio.play();
-    updatePlayerUI(song);
-    updateLibraryUI(song);
-    currentSong = song;
-    const songCard = document.querySelector(
-      `.SongsCard[data-index="${songIndex}"]`
-    );
-    if (songCard) {
-      songCard.classList.add("playing");
-    }
-  }
-
-  function pauseSong() {
-    audio.pause();
-  }
-
-  function updatePlayerUI(song) {
-    const songInfo = document.querySelector(".song-info");
-    const songImg = songInfo.querySelector("img");
-    const songName = songInfo.querySelector(".song-name");
-    const artist = songInfo.querySelector(".artist");
-
-    songImg.src = song.coverPath;
-    songName.textContent = song.name;
-    artist.textContent = song.artist;
-  }
-
-  function updateLibraryUI(song) {
-    const library = document.querySelector(".library");
-    library.innerHTML = `
-      <div class="lib">
-        <i style="color: palevioletred" class="fas fa-music"></i>
-        <div class="info">
-          <div class="songName">${song.name}</div>
-          <div class="artist">${song.artist}</div>
-        </div>
-        <div style="color: palevioletred" class="play">
-          Play<i class="fas fa-play"></i>
-        </div>
-      </div>
-    `;
-  }
-
-  function handleSongCardClick(event) {
-    const songCard = event.target.closest(".SongsCard");
-    if (songCard) {
-      const index = parseInt(songCard.dataset.index);
-      const song = songs[index];
-      if (currentSong && currentSong.filePath === song.filePath) {
-        if (audio.paused) {
-          audio.play();
-        } else {
-          audio.pause();
-        }
-      } else {
-        playSong(song);
-      }
-    }
-  }
-
-  function addSongCards(container, songs) {
-    songs.forEach((song, index) => {
-      const songCardHTML = createSongCard(song, index);
-      container.innerHTML += songCardHTML;
-    });
-  }
-
-  fetchSongsAndCovers()
-    .then(([popularSongs, trendingSongs]) => {
-      songs = popularSongs.concat(trendingSongs);
-      addSongCards(popularSongsContainer, popularSongs);
-      addSongCards(trendingSongsContainer, trendingSongs);
-      const defaultSong = popularSongs[0]; // Default song is "Perfect" by Ed Sheeran
-      playSong(defaultSong);
-      pauseSong(); // Start with the song paused
-    })
-    .catch((error) => {
-      console.error("Error fetching songs and covers:", error);
-    });
-
-  document.addEventListener("click", handleSongCardClick);
-
-  const playPauseBtn = document.getElementById("play-pause");
-  playPauseBtn.addEventListener("click", function () {
-    if (audio.paused) {
-      audio.play();
+let searchBar = document.getElementById("searchBar");
+let songContainer = document.getElementById("songContainer");
+searchBar.addEventListener("keyup", () => {
+  let filter, i, txtValue;
+  let div = songContainer.getElementsByClassName("songcard");
+  filter = searchBar.value.toUpperCase();
+  console.log(searchBar.value);
+  for (i = 0; i < div.length; i++) {
+    txtValue = div[i].textContent || div[i].innerText;
+    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+      div[i].style.display = "";
     } else {
-      audio.pause();
+      div[i].style.display = "none";
     }
-  });
-
-  const prevBtn = document.getElementById("prev");
-  prevBtn.addEventListener("click", function () {
-    if (songIndex > 0) {
-      songIndex--;
-      const prevSong = songs[songIndex];
-      playSong(prevSong);
-    }
-  });
-
-  const nextBtn = document.getElementById("next");
-  nextBtn.addEventListener("click", function () {
-    if (songIndex < songs.length - 1) {
-      songIndex++;
-      const nextSong = songs[songIndex];
-      playSong(nextSong);
-    }
-  });
-
-  audio.addEventListener("ended", function () {
-    // Placeholder for ended song logic
-    if (songIndex < songs.length - 1) {
-      songIndex++;
-      const nextSong = songs[songIndex];
-      playSong(nextSong);
-    } else {
-      // Restart the playlist or stop playback
-      // For now, we'll just pause the playback
-      audio.pause();
-    }
-  });
-
-  const seekBar = document.getElementById("seek-bar");
-  seekBar.addEventListener("input", function () {
-    const seekTime = audio.duration * (seekBar.value / 100);
-    audio.currentTime = seekTime;
-  });
-
-  audio.addEventListener("timeupdate", function () {
-    const progress = (audio.currentTime / audio.duration) * 100;
-    seekBar.value = progress;
-  });
-
-  const volumeBar = document.getElementById("volume-bar");
-  volumeBar.addEventListener("input", function () {
-    audio.volume = volumeBar.value / 100;
-  });
-  const closeIcon = document.querySelector(".close-icon");
-  closeIcon.addEventListener("click", toggleSidebar);
-
-  const hamburgerIcon = document.querySelector(".hamburger-icon");
-  hamburgerIcon.addEventListener("click", toggleSidebar);
+  }
 });
+let songcard = Array.from(document.getElementsByClassName("songcard"));
+songcard.forEach((element, i) => {
+  // i = Math.floor(Math.random() * 21);
+  element.getElementsByTagName("img")[0].src = songs[i].coverPath;
+  element.getElementsByClassName("songname")[0].innerText = songs[i].songName;
+  element.getElementsByClassName("artistname")[0].innerText =
+    songs[i].songArtist;
+  element.getElementsByTagName("i")[0].id = i;
+});
+Array.from(document.getElementsByClassName("playNow")).forEach((element) => {
+  element.addEventListener("click", (e) => {
+    songIndex = parseInt(e.target.id);
+    audioElement.src = `songs/${songIndex + 1}.mp3`;
+    masterSongName.innerHTML = songs[songIndex].songName;
+    masterSongArtist.innerHTML = songs[songIndex].songArtist;
+    songThumbnail.style.backgroundImage = `url('covers/${songIndex + 1}.jpeg')`;
+    audioElement.currentTime = 0;
+    audioElement.play();
+    masterPlay.classList.remove("fa-play-circle");
+    masterPlay.classList.add("fa-pause-circle");
+  });
+});
+
+Array.from(document.getElementsByClassName("songItems")).forEach((element) => {
+  element.addEventListener("click", (e) => {
+    songIndex = parseInt(e.target.id);
+    audioElement.src = `songs/${songIndex + 1}.mp3`;
+    masterSongName.innerHTML = songs[songIndex].songName;
+    masterSongArtist.innerHTML = songs[songIndex].songArtist;
+    songThumbnail.style.backgroundImage = `url('covers/${songIndex + 1}.jpeg')`;
+    audioElement.currentTime = 0;
+    audioElement.play();
+    masterPlay.classList.remove("fa-play-circle");
+    masterPlay.classList.add("fa-pause-circle");
+  });
+});
+
+songPrevious.addEventListener("click", () => {
+  if (songIndex == 0) {
+    songIndex = 19;
+  } else {
+    songIndex--;
+  }
+  audioElement.src = `songs/${songIndex + 1}.mp3`;
+  masterSongName.innerHTML = songs[songIndex].songName;
+  masterSongArtist.innerHTML = songs[songIndex].songArtist;
+  songThumbnail.style.backgroundImage = `url('covers/${songIndex + 1}.jpeg')`;
+  audioElement.currentTime = 0;
+  audioElement.play();
+  masterPlay.classList.remove("fa-play-circle");
+  masterPlay.classList.add("fa-pause-circle");
+});
+songNext.addEventListener("click", () => {
+  if (songIndex == 19) {
+    songIndex = 0;
+  } else {
+    songIndex++;
+  }
+  audioElement.src = `songs/${songIndex + 1}.mp3`;
+  masterSongName.innerHTML = songs[songIndex].songName;
+  masterSongArtist.innerHTML = songs[songIndex].songArtist;
+  songThumbnail.style.backgroundImage = `url('covers/${songIndex + 1}.jpeg')`;
+  audioElement.currentTime = 0;
+  audioElement.play();
+  masterPlay.classList.remove("fa-play-circle");
+  masterPlay.classList.add("fa-pause-circle");
+});
+backSeek.addEventListener("click", () => {
+  audioElement.currentTime -= 5;
+});
+forSeek.addEventListener("click", () => {
+  audioElement.currentTime += 5;
+});
+masterPlay.addEventListener("click", () => {
+  if (audioElement.paused || audioElement.currentTime <= 0) {
+    audioElement.play();
+    masterPlay.classList.remove("fa-play-circle");
+    masterPlay.classList.add("fa-pause-circle");
+  } else {
+    audioElement.pause();
+    masterPlay.classList.remove("fa-pause-circle");
+    masterPlay.classList.add("fa-play-circle");
+  }
+});
+audioElement.addEventListener("timeupdate", () => {
+  endTime.firstChild.innerHTML = (
+    "0" + parseInt(audioElement.duration / 60)
+  ).slice(-2);
+  endTime.lastChild.innerHTML = (
+    "0" + parseInt(audioElement.duration % 60)
+  ).slice(-2);
+  progress = parseInt((audioElement.currentTime / audioElement.duration) * 100);
+  myProgressBar.value = progress;
+  startTime.firstChild.innerHTML = (
+    "0" + parseInt(audioElement.currentTime / 60)
+  ).slice(-2);
+  startTime.lastChild.innerHTML = (
+    "0" + parseInt(audioElement.currentTime % 60)
+  ).slice(-2);
+  if (progress == 100) {
+    songNext.click();
+  }
+});
+
+audioElement.addEventListener("volumechange", () => {
+  vBar.value = audioElement.volume * 100;
+  if (vBar.value == 0) {
+    muteButton.classList.remove("fa-volume-high");
+    muteButton.classList.add("fa-volume-xmark");
+  } else {
+    muteButton.classList.remove("fa-volume-xmark");
+    muteButton.classList.add("fa-volume-high");
+  }
+});
+
+myProgressBar.addEventListener("change", () => {
+  audioElement.currentTime =
+    (myProgressBar.value * audioElement.duration) / 100;
+});
+
+vBar.addEventListener("change", () => {
+  audioElement.volume = vBar.value / 100;
+});
+
+muteButton.addEventListener("click", () => {
+  if (audioElement.volume != 0) {
+    audioElement.volume = 0;
+    muteButton.classList.remove("fa-volume-high");
+    muteButton.classList.add("fa-volume-xmark");
+  } else {
+    audioElement.volume = 0.1;
+    muteButton.classList.remove("fa-volume-xmark");
+    muteButton.classList.add("fa-volume-high");
+  }
+});
+
+document.onkeydown = function (e) {
+  if (e.which == 39) {
+    audioElement.currentTime += 5;
+  } else if (e.which == 37) {
+    audioElement.currentTime -= 5;
+  } else if (e.which == 38) {
+    audioElement.volume += 0.1;
+  } else if (e.which == 40) {
+    audioElement.volume -= 0.1;
+  } else if (e.which == 190) {
+    songNext.click();
+  } else if (e.which == 188) {
+    songPrevious.click();
+  } else if (e.which == 191) {
+    if (audioElement.paused) {
+      audioElement.play();
+      masterPlay.classList.remove("fa-play-circle");
+      masterPlay.classList.add("fa-pause-circle");
+    } else {
+      audioElement.pause();
+      masterPlay.classList.remove("fa-pause-circle");
+      masterPlay.classList.add("fa-play-circle");
+    }
+  }
+};
