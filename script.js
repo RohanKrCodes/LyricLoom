@@ -153,79 +153,105 @@ searchBar.addEventListener("keyup", () => {
     }
   }
 });
+
 let songcard = Array.from(document.getElementsByClassName("songcard"));
 songcard.forEach((element, i) => {
-  // i = Math.floor(Math.random() * 21);
   element.getElementsByTagName("img")[0].src = songs[i].coverPath;
   element.getElementsByClassName("songname")[0].innerText = songs[i].songName;
   element.getElementsByClassName("artistname")[0].innerText =
     songs[i].songArtist;
   element.getElementsByTagName("i")[0].id = i;
 });
-Array.from(document.getElementsByClassName("playNow")).forEach((element) => {
-  element.addEventListener("click", (e) => {
-    songIndex = parseInt(e.target.id);
-    audioElement.src = `songs/${songIndex + 1}.mp3`;
-    masterSongName.innerHTML = songs[songIndex].songName;
-    masterSongArtist.innerHTML = songs[songIndex].songArtist;
-    songThumbnail.style.backgroundImage = `url('covers/${songIndex + 1}.jpeg')`;
-    audioElement.currentTime = 0;
-    audioElement.play();
-    masterPlay.classList.remove("fa-play-circle");
-    masterPlay.classList.add("fa-pause-circle");
-  });
-});
 
-Array.from(document.getElementsByClassName("songItems")).forEach((element) => {
-  element.addEventListener("click", (e) => {
-    songIndex = parseInt(e.target.id);
-    audioElement.src = `songs/${songIndex + 1}.mp3`;
-    masterSongName.innerHTML = songs[songIndex].songName;
-    masterSongArtist.innerHTML = songs[songIndex].songArtist;
-    songThumbnail.style.backgroundImage = `url('covers/${songIndex + 1}.jpeg')`;
-    audioElement.currentTime = 0;
-    audioElement.play();
-    masterPlay.classList.remove("fa-play-circle");
-    masterPlay.classList.add("fa-pause-circle");
+// Function to update time and progress bar
+function updateTime() {
+  // Update current time
+  let currentTimeMinutes = Math.floor(audioElement.currentTime / 60);
+  let currentTimeSeconds = Math.floor(audioElement.currentTime % 60);
+  startTime.firstElementChild.textContent = String(currentTimeMinutes).padStart(
+    2,
+    "0"
+  );
+  startTime.lastElementChild.textContent = String(currentTimeSeconds).padStart(
+    2,
+    "0"
+  );
+
+  // Update end time
+  let durationMinutes = Math.floor(audioElement.duration / 60);
+  let durationSeconds = Math.floor(audioElement.duration % 60);
+  endTime.firstElementChild.textContent = String(durationMinutes).padStart(
+    2,
+    "0"
+  );
+  endTime.lastElementChild.textContent = String(durationSeconds).padStart(
+    2,
+    "0"
+  );
+
+  // Update progress bar
+  let progress = parseInt(
+    (audioElement.currentTime / audioElement.duration) * 100
+  );
+  myProgressBar.value = progress;
+
+  // Check if progress is 100% and play next song
+  if (progress == 100) {
+    if (songIndex < songs.length - 1) {
+      songIndex++;
+      playSong(songIndex);
+    }
+  }
+}
+
+// Function to play a song
+function playSong(index) {
+  audioElement.src = songs[index].filePath; // Update the source of the audio element
+  masterSongName.innerHTML = songs[index].songName;
+  masterSongArtist.innerHTML = songs[index].songArtist;
+  songThumbnail.style.backgroundImage = `url('${songs[index].coverPath}')`;
+  audioElement.currentTime = 0;
+  audioElement.play();
+  masterPlay.classList.remove("fa-play-circle");
+  masterPlay.classList.add("fa-pause-circle");
+}
+
+// Loop through each songcard element
+songcard.forEach((element, i) => {
+  element.addEventListener("click", () => {
+    songIndex = i;
+    playSong(songIndex);
   });
 });
 
 songPrevious.addEventListener("click", () => {
   if (songIndex == 0) {
-    songIndex = 19;
+    songIndex = songs.length - 1;
   } else {
     songIndex--;
   }
-  audioElement.src = `songs/${songIndex + 1}.mp3`;
-  masterSongName.innerHTML = songs[songIndex].songName;
-  masterSongArtist.innerHTML = songs[songIndex].songArtist;
-  songThumbnail.style.backgroundImage = `url('covers/${songIndex + 1}.jpeg')`;
-  audioElement.currentTime = 0;
-  audioElement.play();
-  masterPlay.classList.remove("fa-play-circle");
-  masterPlay.classList.add("fa-pause-circle");
+  playSong(songIndex);
 });
+
 songNext.addEventListener("click", () => {
-  if (songIndex == 19) {
+  if (songIndex == songs.length - 1) {
     songIndex = 0;
   } else {
     songIndex++;
   }
-  audioElement.src = `songs/${songIndex + 1}.mp3`;
-  masterSongName.innerHTML = songs[songIndex].songName;
-  masterSongArtist.innerHTML = songs[songIndex].songArtist;
-  songThumbnail.style.backgroundImage = `url('covers/${songIndex + 1}.jpeg')`;
-  audioElement.currentTime = 0;
-  audioElement.play();
-  masterPlay.classList.remove("fa-play-circle");
-  masterPlay.classList.add("fa-pause-circle");
+  playSong(songIndex);
 });
+
+// Event listeners for seek buttons
 backSeek.addEventListener("click", () => {
   audioElement.currentTime -= 5;
 });
+
 forSeek.addEventListener("click", () => {
   audioElement.currentTime += 5;
 });
+
+// Event listener for master play button
 masterPlay.addEventListener("click", () => {
   if (audioElement.paused || audioElement.currentTime <= 0) {
     audioElement.play();
@@ -237,26 +263,8 @@ masterPlay.addEventListener("click", () => {
     masterPlay.classList.add("fa-play-circle");
   }
 });
-audioElement.addEventListener("timeupdate", () => {
-  endTime.firstChild.innerHTML = (
-    "0" + parseInt(audioElement.duration / 60)
-  ).slice(-2);
-  endTime.lastChild.innerHTML = (
-    "0" + parseInt(audioElement.duration % 60)
-  ).slice(-2);
-  progress = parseInt((audioElement.currentTime / audioElement.duration) * 100);
-  myProgressBar.value = progress;
-  startTime.firstChild.innerHTML = (
-    "0" + parseInt(audioElement.currentTime / 60)
-  ).slice(-2);
-  startTime.lastChild.innerHTML = (
-    "0" + parseInt(audioElement.currentTime % 60)
-  ).slice(-2);
-  if (progress == 100) {
-    songNext.click();
-  }
-});
 
+// Event listener for volume change
 audioElement.addEventListener("volumechange", () => {
   vBar.value = audioElement.volume * 100;
   if (vBar.value == 0) {
@@ -268,15 +276,18 @@ audioElement.addEventListener("volumechange", () => {
   }
 });
 
+// Event listener for progress bar change
 myProgressBar.addEventListener("change", () => {
   audioElement.currentTime =
     (myProgressBar.value * audioElement.duration) / 100;
 });
 
+// Event listener for volume bar change
 vBar.addEventListener("change", () => {
   audioElement.volume = vBar.value / 100;
 });
 
+// Event listener for mute button
 muteButton.addEventListener("click", () => {
   if (audioElement.volume != 0) {
     audioElement.volume = 0;
@@ -289,6 +300,7 @@ muteButton.addEventListener("click", () => {
   }
 });
 
+// Keyboard shortcuts
 document.onkeydown = function (e) {
   if (e.which == 39) {
     audioElement.currentTime += 5;
@@ -314,3 +326,6 @@ document.onkeydown = function (e) {
     }
   }
 };
+
+// Update time and progress bar on timeupdate event
+audioElement.addEventListener("timeupdate", updateTime);
